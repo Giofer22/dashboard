@@ -8,7 +8,7 @@ session_start();
 if ($_POST) {
     if (empty($_POST['email']) || empty($_POST['senha'])) {
 
-        $_SESSION["msg"] = "por favor preencha os campos obrigatorios";
+        $_SESSION["msg"] = "Por favor, preencha os campos obrigatorios";
         $_SESSION["tipo"] = "warning";
 
         header("location: login.php");
@@ -17,7 +17,7 @@ if ($_POST) {
         $email = trim($_POST['email']);
         $senha = trim($_POST['senha']);
 
-        include('./funcao_conexao_msqli.php');
+        include('conexao.php');
 
         $sql = "
             SELECT pk_usuario, nome FROM usuarios WHERE email LIKE '$email' AND senha LIKE '$senha'
@@ -28,7 +28,7 @@ if ($_POST) {
         if (mysqli_num_rows($query) > 0) {
 
             // organizar dados do banco como objetos
-            $row = mysqli_fetch_object($querry);
+            $row = mysqli_fetch_object($query);
 
 
 

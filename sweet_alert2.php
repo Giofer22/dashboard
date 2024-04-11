@@ -15,8 +15,8 @@ if (isset($_SESSION["tipo"]) && isset($_SESSION["msg"])) {
         });
     
           Toast.fire({
-            icon: 'info',
-            title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
+            icon: '".$_SESSION["tipo"]."',
+            title: '".$_SESSION["msg"]."'
           });
     });
     </script>
