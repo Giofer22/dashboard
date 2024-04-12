@@ -8,6 +8,7 @@ session_start();
 if ($_POST) {
     if (empty($_POST['email']) || empty($_POST['senha'])) {
 
+        $_SESSION["title"] = "Erro!";
         $_SESSION["msg"] = "Por favor, preencha os campos obrigatorios";
         $_SESSION["tipo"] = "warning";
 
@@ -19,20 +20,19 @@ if ($_POST) {
 
         include('conexao.php');
 
-        $sql = "
-            SELECT pk_usuario, nome FROM usuarios WHERE email LIKE '$email' AND senha LIKE '$senha'
-        ";
+        // stmt = statement 
+        $stmt = $conn->prepare("
+            SELECT pk_usuario, nome FROM usuarios WHERE email LIKE :email AND senha LIKE :senha
+        ");
 
-        $query = mysqli_query($conn, $sql);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':senha', $senha);
 
-        if (mysqli_num_rows($query) > 0) {
+        $stmt->execute();
 
+        if ($stmt->rowCount() > 0) {
             // organizar dados do banco como objetos
-            $row = mysqli_fetch_object($query);
-
-
-
-
+            $row = $stmt->fetch(PDO::FETCH_OBJ);
 
             // declara variavel informando se o usuario está autenticado
             $_SESSION["autenticado"] = true;
@@ -40,19 +40,18 @@ if ($_POST) {
             $_SESSION["nome_usuario"] = $row->nome;
             $_SESSION["tempo_login"] = time();
 
-            header('location: ./crud_mysqli');
+            header('location: ./');
             exit;
         } else {
-            echo "
-            <script>
-                alert('email e/ou senha inválida');
-                window.location='./tela_login.php';
-            </script>
-            ";
+            $_SESSION["title"] = "OPS!";
+            $_SESSION["msg"] = "E-mail e/ou senha invalidos";
+            $_SESSION["tipo"] = "error";
+
+            header('Location: ./login.php');
             exit;
         }
     }
 } else {
-    header('Location: ./tela_login.php');
+    header('Location: ./login.php');
     exit;
 }
