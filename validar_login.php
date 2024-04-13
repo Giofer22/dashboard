@@ -40,6 +40,13 @@ if ($_POST) {
             $_SESSION["nome_usuario"] = $row->nome;
             $_SESSION["tempo_login"] = time();
 
+            // transforma string em array, onde tiver " "
+            $nome_usuario = explode(" ", $row->nome);
+
+            // concatena primeiro nome com ultimo nome
+            $_SESSION["nome_usuario"] = $nome_usuario[0]. " ". end($nome_usuario);
+
+
             header('location: ./');
             exit;
         } else {

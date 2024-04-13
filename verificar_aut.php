@@ -1,5 +1,7 @@
 <?php
 
+
+
 session_start();
 // verifica se o usuario não está conectado
 if ($_SESSION["autenticado"] != true) {
@@ -10,7 +12,7 @@ if ($_SESSION["autenticado"] != true) {
 } else {
 
     // segundos
-    $tempo_limite = 5000;
+    $tempo_limite = 300;
     $tempo_atual = time();
 
     // verifica tempo inativo 
