@@ -17,6 +17,7 @@ if ($_POST) {
     } else {
         $email = trim($_POST['email']);
         $senha = trim($_POST['senha']);
+        $remember = $_POST['remember'] ?? "off";
 
         include('conexao.php');
 
@@ -31,6 +32,18 @@ if ($_POST) {
         $stmt->execute();
 
         if ($stmt->rowCount() > 0) {
+            // verifica se "Lembrar de mim" foi atvado
+            if($remember == "on"){
+                // cria um coockie no navegador salvando os dados de acesso
+                setcookie("email",$email);
+                setcookie("senha",$senha);
+            } else{
+                // exclui os cookies com os dados de acesso
+                setcookie("email");
+                setcookie("senha");
+            }
+
+
             // organizar dados do banco como objetos
             $row = $stmt->fetch(PDO::FETCH_OBJ);
 

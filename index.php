@@ -184,6 +184,17 @@ include('conexao.php');
 
   <script>
     $(function() {
+
+      $("#theme-mode").click(function(){
+        var classMode = $("#theme-mode").attr("class")
+        if(classMode == "fa fa-sun"){
+          $("body").removeClass("dark-mode");
+          $("#theme-mode").attr("class","fa fa-moon")
+        }else{
+          $("body").addClass("dark-mode")
+          $("#theme-mode").attr("class","fa fa-sun")
+        }
+      })
       
     var areaChartData = {
       labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
