@@ -3,6 +3,10 @@
 
 
 session_start();
+
+// caminho fixo do software web
+define("caminhoURL", "http://localhost/giovanni/dashboard/");
+
 // verifica se o usuario não está conectado
 if ($_SESSION["autenticado"] != true) {
     session_destroy();

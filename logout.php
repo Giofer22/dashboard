@@ -1,7 +1,7 @@
 <?php
-
+include("./verificar_aut.php");
 
 session_start();
 session_destroy();
-header("Location: ./login.php");
+header("Location:".caminhoURL."login.php");
 exit;

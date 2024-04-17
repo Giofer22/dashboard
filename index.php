@@ -184,45 +184,54 @@ include('conexao.php');
 
   <script>
     $(function() {
+      // navbar-white navbar-light
+      // sidebar-dark-primary
 
-      $("#theme-mode").click(function(){
+      $("#theme-mode").click(function() {
         var classMode = $("#theme-mode").attr("class")
-        if(classMode == "fa fa-sun"){
+        if (classMode == "fa fa-sun") {
           $("body").removeClass("dark-mode");
-          $("#theme-mode").attr("class","fa fa-moon")
-        }else{
+          $("#theme-mode").attr("class", "fa fa-moon")
+          $("#nav").removeClass("navbar-black navbar-dark")
+          $("#nav").addClass("navbar-white navbar-light")
+          $("#aside").removeClass("sidebar-dark-primary")
+          $("#aside").addClass("sidebar-light-primary")
+        } else {
           $("body").addClass("dark-mode")
-          $("#theme-mode").attr("class","fa fa-sun")
+          $("#theme-mode").attr("class", "fa fa-sun")
+          $("#nav").removeClass("navbar-white navbar-light")
+          $("#nav").addClass("navbar-black navbar-dark")
+          $("#aside").removeClass("sidebar-light-primary")
+          $("#aside").addClass("sidebar-dark-primary")
         }
       })
-      
-    var areaChartData = {
-      labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-      datasets: [
-        {
-          label               : 'Digital Goods',
-          backgroundColor     : 'rgba(60,141,188,0.9)',
-          borderColor         : 'rgba(60,141,188,0.8)',
-          pointRadius          : false,
-          pointColor          : '#3b8bba',
-          pointStrokeColor    : 'rgba(60,141,188,1)',
-          pointHighlightFill  : '#fff',
-          pointHighlightStroke: 'rgba(60,141,188,1)',
-          data                : [28, 48, 40, 19, 86, 27, 90]
-        },
-        {
-          label               : 'Electronics',
-          backgroundColor     : 'rgba(210, 214, 222, 1)',
-          borderColor         : 'rgba(210, 214, 222, 1)',
-          pointRadius         : false,
-          pointColor          : 'rgba(210, 214, 222, 1)',
-          pointStrokeColor    : '#c1c7d1',
-          pointHighlightFill  : '#fff',
-          pointHighlightStroke: 'rgba(220,220,220,1)',
-          data                : [65, 59, 80, 81, 56, 55, 40]
-        },
-      ]
-    }
+
+      var areaChartData = {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [{
+            label: 'Digital Goods',
+            backgroundColor: 'rgba(60,141,188,0.9)',
+            borderColor: 'rgba(60,141,188,0.8)',
+            pointRadius: false,
+            pointColor: '#3b8bba',
+            pointStrokeColor: 'rgba(60,141,188,1)',
+            pointHighlightFill: '#fff',
+            pointHighlightStroke: 'rgba(60,141,188,1)',
+            data: [28, 48, 40, 19, 86, 27, 90]
+          },
+          {
+            label: 'Electronics',
+            backgroundColor: 'rgba(210, 214, 222, 1)',
+            borderColor: 'rgba(210, 214, 222, 1)',
+            pointRadius: false,
+            pointColor: 'rgba(210, 214, 222, 1)',
+            pointStrokeColor: '#c1c7d1',
+            pointHighlightFill: '#fff',
+            pointHighlightStroke: 'rgba(220,220,220,1)',
+            data: [65, 59, 80, 81, 56, 55, 40]
+          },
+        ]
+      }
 
       //-------------
       //- BAR CHART -
