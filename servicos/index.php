@@ -20,6 +20,8 @@ include('../conexao.php');
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Tempusdominus Bootstrap 4 -->
     <link rel="stylesheet" href="../dist/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+    <!-- bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- iCheck -->
     <link rel="stylesheet" href="../dist/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
     <!-- Theme style -->
@@ -39,28 +41,46 @@ include('../conexao.php');
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            <!-- Content Header (Page header) -->
-            <div class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h1 class="m-0">Serviços</h1>
-                        </div><!-- /.col -->
-                    </div><!-- /.row -->
-                </div><!-- /.container-fluid -->
-            </div>
-            <!-- /.content-header -->
 
             <!-- Main content -->
-            <section class="content">
+            <section class="content mt-3">
                 <div class="container-fluid">
                     <!-- Small boxes (Stat box) -->
                     <div class="row">
-
+                        <div class="col">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title">Lista de serviços</h3>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-hover">
+                                        <thead >
+                                            <tr>
+                                                <th>CÓD</th>
+                                                <th class="text-center">Serviço</th>
+                                                <th class="text-center">Opções</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-hover">
+                                            <td>1</td>
+                                            <td class="text-center">Manutenção</td>
+                                            <td class="text-center">
+                                                <a 
+                                                href="form.php?ref=' . base64_encode($row->pk_cliente) . '" class="btn btn-info btn-sm "><i class="bi bi-pencil-square"></i></a>
+                                                <a onclick= "if(confirm(\'Deseja realmente remover este registro? \'))
+                                                {window.location=\'remover.php?ref' . base64_encode($row->pk_cliente) . '\'} "
+                                                 href="remover.php?ref=' . base64_encode($row->pk_cliente) . '" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
+                                            </td>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                        <!-- /.row -->
                     </div>
-                    <!-- /.row -->
-                </div>
-                <!-- /.container-fluid -->
+                    <!-- /.container-fluid -->
             </section>
             <!-- /.content -->
         </div>
@@ -89,6 +109,8 @@ include('../conexao.php');
     <script src="../dist/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- Tempusdominus Bootstrap 4 -->
     <script src="../dist/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <!-- Bootstrap 5 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <!-- overlayScrollbars -->
     <script src="../dist/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
     <!-- ChartJS -->
