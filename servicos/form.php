@@ -1,7 +1,34 @@
 <?php
 include('../verificar_aut.php');
 include('../conexao.php');
-// include('../sweet_alert2.php')
+
+if (empty($_GET["ref"])) {
+    $pk_servico = "";
+    $servico = "";
+} else {
+    $pk_servico = base64_decode(trim($_GET["ref"]));
+
+    $sql = "
+    SELECT * FROM servicos
+    WHERE pk_servico = :pk_servico
+    ";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':pk_servico', $pk_servico);
+    $stmt->execute();
+
+    if ($stmt->rowCount() > 0) {
+        $dado = $stmt->fetch(PDO::FETCH_OBJ);
+        $servico = $dado->servico;
+    } else {
+        $_SESSION["tipo"] = 'error';
+        $_SESSION["title"] = 'OPS!';
+        $_SESSION["msg"] = 'Registro não encontrado';
+
+        header("location: ./");
+        exit;
+    }
+}
+
 ?>
 
 
@@ -21,17 +48,16 @@ include('../conexao.php');
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Tempusdominus Bootstrap 4 -->
     <link rel="stylesheet" href="../dist/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
-   
     <!-- bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- iCheck -->
     <link rel="stylesheet" href="../dist/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="dist/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../dist/css/adminlte.min.css">
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="../dist/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
-     <!-- SweetAlert2 -->
-     <link rel="stylesheet" href="../dist/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -52,53 +78,36 @@ include('../conexao.php');
                     <!-- Small boxes (Stat box) -->
                     <div class="row">
                         <div class="col">
-                            <div class="card card-primary card-outline">
-                                <div class="card-header">
-                                    <h3 class="card-title">Lista de serviços</h3>
+                            <form method="post" action="salvar.php">
+                                <div class="card card-primary card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Lista de serviços</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-2 ">
+                                                <label for="pk_servico" class="form-label">Cód</label>
+                                                <input readonly type="text" name="pk_servico" id="pk_servico" class="form-control" value="<?php echo $pk_servico ?>">
+                                            </div>
+                                            <div class="col">
+                                                <div class="col">
+                                                    <label for="servico" class="form-label">Serviço</label>
+                                                    <input required type="text" name="servico" id="servico" class="form-control" value="<?php echo $servico ?>">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /.card-body -->
+                                    <div class="card-footer text-end ">
+                                        <a href="./" class="btn btn-outline-danger">
+                                            Voltar
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            Salvar
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>CÓD</th>
-                                                <th class="text-center">Serviço</th>
-                                                <th class="text-center">Opções</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="table-hover">
-                                            <?php
-                                            $sql = "
-                                            SELECT pk_servico, servico
-                                            FROM servicos
-                                            ORDER BY servico
-                                            ";
-                                            $stmt = $conn->prepare($sql);
-                                            $stmt->execute();
-
-                                            $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-                                            foreach ($dados as $row) {
-                                                echo '
-                                                <tr>
-                                                <td>' . $row->pk_servico . '</td>
-                                                <td class="text-center">' . $row->servico . '</td>
-                                                <td class="text-center">
-                                                    <a 
-                                                    href="form.php?ref=' . base64_encode($row->pk_servico) . '" class="btn btn-info btn-sm "><i class="bi bi-pencil-square"></i></a>
-                                                    <a onclick= "if(confirm(\'Deseja realmente remover este registro? \'))
-                                                    {window.location=\'remover.php?ref' . base64_encode($row->pk_servico) . '\'} "
-                                                    href="remover.php?ref=' . base64_encode($row->pk_servico) . '" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
-                                                </td>
-                                            </tr>
-                                                ';
-                                            }
-
-                                            ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <!-- /.card-body -->
-                            </div>
+                            </form>
                             <!-- /.card -->
                         </div>
                         <!-- /.row -->
@@ -140,11 +149,6 @@ include('../conexao.php');
     <script src="../dist/plugins/chart.js/Chart.min.js"></script>
     <!-- AdminLTE App -->
     <script src="../dist/js/adminlte.js"></script>
-    <!-- SWeetAlert2 -->
-    <script src="../dist/plugins/sweetalert2/sweetalert2.min.js"></script>
-    <?php
-    include("../sweet_alert2.php");
-    ?>
 
     <script>
         $(function() {
