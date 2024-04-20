@@ -1,7 +1,6 @@
 <?php
 include('../verificar_aut.php');
 include('../conexao.php');
-// include('../sweet_alert2.php')
 ?>
 
 
@@ -11,7 +10,7 @@ include('../conexao.php');
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ordem de Servac | Serviços</title>
+    <title>Ordem de Servac | Clientes</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -54,7 +53,7 @@ include('../conexao.php');
                         <div class="col">
                             <div class="card card-primary card-outline">
                                 <div class="card-header">
-                                    <h3 class="card-title">Lista de serviços</h3>
+                                    <h3 class="card-title">Lista de clientes</h3>
                                     <a href="./form.php" class="btn btn-primary float-end btn-sm ">
                                         Adicionar 
                                         <i class="bi bi-plus"></i>
@@ -64,17 +63,20 @@ include('../conexao.php');
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
-                                                <th>CÓD</th>
-                                                <th class="text-center">Serviço</th>
+                                                <th>ID</th>
+                                                <th class="text-center">Cliente</th>
+                                                <th class="text-center">CPF</th>
+                                                <th class="text-center">Whatsapp</th>
+                                                <th class="text-center">E-mail</th>
                                                 <th class="text-center">Opções</th>
                                             </tr>
                                         </thead>
                                         <tbody class="table-hover">
                                             <?php
                                             $sql = "
-                                            SELECT pk_servico, servico
-                                            FROM servicos
-                                            ORDER BY servico
+                                            SELECT pk_cliente, nome, cpf, whatsapp, email
+                                            FROM clientes
+                                            ORDER BY nome
                                             ";
                                             $stmt = $conn->prepare($sql);
                                             $stmt->execute();
@@ -84,13 +86,16 @@ include('../conexao.php');
                                             foreach ($dados as $row) {
                                                 echo '
                                                 <tr>
-                                                <td>' . $row->pk_servico . '</td>
-                                                <td class="text-center">' . $row->servico . '</td>
+                                                <td>' . $row->pk_cliente . '</td>
+                                                <td class="text-center">' . $row->nome . '</td>
+                                                <td class="text-center">' . $row->cpf . '</td>
+                                                <td class="text-center">' . $row->whatsapp . '</td>
+                                                <td class="text-center">' . $row->email . '</td>
                                                 <td class="text-center">
                                                     <a 
-                                                    href="form.php?ref=' . base64_encode($row->pk_servico) . '
+                                                    href="form.php?ref=' . base64_encode($row->pk_cliente) . '
                                                     " class="btn btn-info btn-sm "><i class="bi bi-pencil-square"></i></a>
-                                                    <a href="remover.php?ref=' . base64_encode($row->pk_servico) . '
+                                                    <a href="remover.php?ref=' . base64_encode($row->pk_cliente) . '
                                                     " class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
                                                 </td>
                                             </tr>

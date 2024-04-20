@@ -1,7 +1,41 @@
 <?php
 include('../verificar_aut.php');
 include('../conexao.php');
-// include('../sweet_alert2.php')
+
+if (empty($_GET["ref"])) {
+    $pk_cliente = "";
+    $nome = "";
+    $cpf = "";
+    $whatsapp = "";
+    $email = "";
+} else {
+    $pk_cliente = base64_decode(trim($_GET["ref"]));
+
+    $sql = "
+    SELECT pk_cliente, nome, cpf, whatsapp, email
+    FROM clientes
+    WHERE pk_cliente = :pk_cliente
+    ";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':pk_cliente', $pk_cliente);
+    $stmt->execute();
+
+    if ($stmt->rowCount() > 0) {
+        $dado = $stmt->fetch(PDO::FETCH_OBJ);
+        $nome = $dado->nome;
+        $cpf = $dado->cpf;
+        $whatsapp = $dado->whatsapp;
+        $email = $dado->email;
+    } else {
+        $_SESSION["tipo"] = 'error';
+        $_SESSION["title"] = 'OPS!';
+        $_SESSION["msg"] = 'Registro não encontrado';
+
+        header("location: ./");
+        exit;
+    }
+}
+
 ?>
 
 
@@ -11,7 +45,7 @@ include('../conexao.php');
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ordem de Servac | Serviços</title>
+    <title>Ordem de Servac | Cliente</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -21,17 +55,16 @@ include('../conexao.php');
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Tempusdominus Bootstrap 4 -->
     <link rel="stylesheet" href="../dist/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
-   
     <!-- bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- iCheck -->
     <link rel="stylesheet" href="../dist/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="../dist/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../dist/css/adminlte.min.css">
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="../dist/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
-     <!-- SweetAlert2 -->
-     <link rel="stylesheet" href="../dist/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -52,57 +85,51 @@ include('../conexao.php');
                     <!-- Small boxes (Stat box) -->
                     <div class="row">
                         <div class="col">
-                            <div class="card card-primary card-outline">
-                                <div class="card-header">
-                                    <h3 class="card-title">Lista de serviços</h3>
-                                    <a href="./form.php" class="btn btn-primary float-end btn-sm ">
-                                        Adicionar 
-                                        <i class="bi bi-plus"></i>
-                                    </a>
+                            <form method="post" action="salvar.php">
+                                <div class="card card-primary card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Cadastro do cliente</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <label for="pk_cliente" class="form-label">ID:</label>
+                                                    <input value="<?php echo $pk_cliente ?>" readonly type="number" name="pk_cliente" id="pk_cliente" class="form-control ">
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <label for="nome" class="form-label">Cliente:</label>
+                                                    <input value="<?php echo $nome ?>" type="text" name="nome" id="nome" class="form-control" required>
+                                                </div>
+
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col-md-4">
+                                                    <label for="cpf" class="form-label">CPF:</label>
+                                                    <input value="<?php echo $cpf ?>" type="text" name="cpf" id="cpf" class="form-control" data-mask="000.000.000-00" required minlength="14">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="whatsapp" class="form-label">Whatsapp:</label>
+                                                    <input value="<?php echo $whatsapp ?>" type="text" name="whatsapp" id="whatsapp" class="form-control" data-mask="(00) 00000-0000" required minlength="15">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="email" class="form-label">Email:</label>
+                                                    <input value="<?php echo $email ?>" type="email" name="email" id="email" class="form-control" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /.card-body -->
+                                    <div class="card-footer text-end ">
+                                        <a href="./" class="btn btn-outline-danger">
+                                            Voltar
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            Salvar
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>CÓD</th>
-                                                <th class="text-center">Serviço</th>
-                                                <th class="text-center">Opções</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="table-hover">
-                                            <?php
-                                            $sql = "
-                                            SELECT pk_servico, servico
-                                            FROM servicos
-                                            ORDER BY servico
-                                            ";
-                                            $stmt = $conn->prepare($sql);
-                                            $stmt->execute();
-
-                                            $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-                                            foreach ($dados as $row) {
-                                                echo '
-                                                <tr>
-                                                <td>' . $row->pk_servico . '</td>
-                                                <td class="text-center">' . $row->servico . '</td>
-                                                <td class="text-center">
-                                                    <a 
-                                                    href="form.php?ref=' . base64_encode($row->pk_servico) . '
-                                                    " class="btn btn-info btn-sm "><i class="bi bi-pencil-square"></i></a>
-                                                    <a href="remover.php?ref=' . base64_encode($row->pk_servico) . '
-                                                    " class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
-                                                </td>
-                                            </tr>
-                                                ';
-                                            }
-
-                                            ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <!-- /.card-body -->
-                            </div>
+                            </form>
                             <!-- /.card -->
                         </div>
                         <!-- /.row -->
@@ -144,8 +171,9 @@ include('../conexao.php');
     <script src="../dist/plugins/chart.js/Chart.min.js"></script>
     <!-- AdminLTE App -->
     <script src="../dist/js/adminlte.js"></script>
-    <!-- SWeetAlert2 -->
-    <script src="../dist/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="../dist/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <?php
     include("../sweet_alert2.php");
     ?>

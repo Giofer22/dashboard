@@ -53,7 +53,7 @@ if (empty($_GET["ref"])) {
     <!-- iCheck -->
     <link rel="stylesheet" href="../dist/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
     <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="dist/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <link rel="stylesheet" href="../dist/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../dist/css/adminlte.min.css">
     <!-- overlayScrollbars -->
@@ -149,6 +149,11 @@ if (empty($_GET["ref"])) {
     <script src="../dist/plugins/chart.js/Chart.min.js"></script>
     <!-- AdminLTE App -->
     <script src="../dist/js/adminlte.js"></script>
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="../dist/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <?php
+    include("../sweet_alert2.php");
+    ?>
 
     <script>
         $(function() {

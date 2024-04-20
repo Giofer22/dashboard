@@ -1,6 +1,6 @@
 <?php
 
-session_start();
+@session_start();
 
 // isset verifica se a variavel foi criada
 if (isset($_SESSION["tipo"]) && isset($_SESSION["msg"]) && isset($_SESSION["title"])) {
