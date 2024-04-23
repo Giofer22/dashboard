@@ -67,7 +67,7 @@ include('conexao.php');
                 <div class="icon">
                   <i class="bi bi-wrench-adjustable-circle-fill"></i>
                 </div>
-                <a href="./ordens_servico.php" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="./404.php" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -82,7 +82,7 @@ include('conexao.php');
                 <div class="icon">
                   <i class="bi bi-check-circle-fill"></i>
                 </div>
-                <a href="./ordens_servico.php" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="./404.php" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -97,7 +97,7 @@ include('conexao.php');
                 <div class="icon">
                   <i class="bi bi-person-circle"></i>
                 </div>
-                <a href="./clientes.php" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="./clientes/" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -112,7 +112,7 @@ include('conexao.php');
                 <div class="icon">
                   <i class="bi-gear-wide-connected"></i>
                 </div>
-                <a href="#" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="./servicos/" class="small-box-footer">Ver todos <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->

@@ -43,6 +43,7 @@ if ($_POST) {
             header("location: ./");
             exit;
         } catch (PDOException $ex) {
+            echo $ex->getMessage();exit;
             $_SESSION["tipo"] = 'error';
             $_SESSION["title"] = 'OPS!';
             $_SESSION["msg"] = $ex->getMessage();
