@@ -3,29 +3,33 @@ include('../verificar_aut.php');
 include('../conexao.php');
 
 if (empty($_GET["ref"])) {
-    $pk_cliente = "";
-    $nome = "";
+    $pk_ordem_servico = "";
     $cpf = "";
-    $whatsapp = "";
-    $email = "";
+    $nome = "";
+    $data_ordem_servico = "";
+    $data_inicio = "";
+    $data_fim = "";
 } else {
-    $pk_cliente = base64_decode(trim($_GET["ref"]));
+    $pk_ordem_servico = base64_decode(trim($_GET["ref"]));
 
     $sql = "
-    SELECT pk_cliente, nome, cpf, whatsapp, email
-    FROM clientes
-    WHERE pk_cliente = :pk_cliente
+    SELECT pk_ordem_servico, data_ordem_servico, data_inicio, data_fim,
+    cpf, nome
+    FROM ordens_servicos
+    JOIN clientes ON pk_cliente = fk_cliente
+    WHERE pk_ordem_servico = :pk_ordem_servico
     ";
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':pk_cliente', $pk_cliente);
+    $stmt->bindParam(':pk_ordem_servico', $pk_ordem_servico);
     $stmt->execute();
 
     if ($stmt->rowCount() > 0) {
         $dado = $stmt->fetch(PDO::FETCH_OBJ);
-        $nome = $dado->nome;
+        $data_ordem_servico = $dado->data_ordem_servico;
+        $data_inicio = $dado->data_inicio;
+        $data_inicio = $dado->data_fim;
         $cpf = $dado->cpf;
-        $whatsapp = $dado->whatsapp;
-        $email = $dado->email;
+        $nome = $dado->nome;
     } else {
         $_SESSION["tipo"] = 'error';
         $_SESSION["title"] = 'OPS!';
@@ -94,30 +98,31 @@ if (empty($_GET["ref"])) {
                                         <div class="container">
                                             <div class="row">
                                                 <div class="col-md-2">
-                                                    <label for="pk_cliente" class="form-label">CÓD:</label>
-                                                    <input value="<?php echo $pk_cliente ?>" readonly type="number" name="pk_cliente" id="pk_cliente" class="form-control ">
+                                                    <label for="pk_ordem_servico" class="form-label">CÓD:</label>
+                                                    <input value="<?php echo $pk_ordem_servico ?>" readonly type="number" name="pk_ordem_servico" id="pk_ordem_servico" class="form-control ">
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <label for="nome" class="form-label">CPF:</label>
-                                                    <input value="<?php echo $nome ?>" type="text" name="nome" id="nome" class="form-control" required>
+                                                    <label for="cpf" class="form-label">CPF:</label>
+                                                    <input  value="<?php echo $cpf ?>" type="text" name="cpf" id="cpf" class="form-control" 
+                                                    data-mask="000.000.000-00" required minlength="14">
                                                 </div>
                                                 <div class="col-md">
                                                     <label for="nome" class="form-label">Cliente:</label>
-                                                    <input readonly value="<?php echo $nome ?>" type="text" name="nome" id="nome" class="form-control" required>
+                                                    <input readonly value="<?php echo $nome ?>" type="text" name="nome" id="nome" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="row mt-3">
                                                 <div class="col">
-                                                    <label for="cpf" class="form-label">Data O.S.:</label>
-                                                    <input readonly value="<?php echo $cpf ?>" type="text" name="cpf" id="cpf" class="form-control" data-mask="000.000.000-00" required minlength="14">
+                                                    <label for="data_ordem_servico" class="form-label">Data O.S.:</label>
+                                                    <input readonly value="<?php echo $data_ordem_servico ?>" type="date" name="data_ordem_servico" id="data_ordem_servico" class="form-control">
                                                 </div>
                                                 <div class="col">
-                                                    <label for="whatsapp" class="form-label">Data início:</label>
-                                                    <input value="<?php echo $whatsapp ?>" type="date" name="whatsapp" id="whatsapp" class="form-control" data-mask="(00) 00000-0000" required minlength="15">
+                                                    <label for="data_inicio" class="form-label">Data início:</label>
+                                                    <input value="<?php echo $data_inicio ?>" type="date" name="data_inicio" id="data_inicio" class="form-control" >
                                                 </div>
                                                 <div class="col">
-                                                    <label for="whatsapp" class="form-label">Data início:</label>
-                                                    <input value="<?php echo $whatsapp ?>" type="date" name="whatsapp" id="whatsapp" class="form-control" data-mask="(00) 00000-0000" required minlength="15">
+                                                    <label for="data_fim" class="form-label">Data Fim:</label>
+                                                    <input value="<?php echo $data_fim ?>" type="date" name="data_fim" id="data_fim" class="form-control" >
                                                 </div>
                                             </div>
                                             <div class="row mt-5">
@@ -125,7 +130,6 @@ if (empty($_GET["ref"])) {
                                                     <div class="card-header">
                                                         <h3 class="card-title">Lista de Ordens de Serviço</h3>
                                                         <a href="./form.php" class="btn btn-primary float-end btn-sm ">
-                                                            Adicionar
                                                             <i class="bi bi-plus"></i>
                                                         </a>
                                                     </div>
@@ -218,6 +222,7 @@ if (empty($_GET["ref"])) {
     <script src="../dist/js/adminlte.js"></script>
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="../dist/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <!-- Jquery mask -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <?php
     include("../sweet_alert2.php");

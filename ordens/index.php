@@ -67,39 +67,52 @@ include('../conexao.php');
                                                 <th class="text-center">Cliente</th>
                                                 <th class="text-center">Data de inicio</th>
                                                 <th class="text-center">Data de termino</th>
+                                                <th class="text-center">Valor total</th>
                                                 <th class="text-center">Opções</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="table-hover">
+                                        <tbody >
                                             <?php
                                             $sql = "
-                                            SELECT pk_ordem_servico, fk_cliente, data_inicio, data_fim
+                                            SELECT pk_ordem_servico, DATE_FORMAT(data_inicio, '%d/%m/%Y') data_inicio ,
+                                            DATE_FORMAT(data_fim, '%d/%m/%Y') data_fim, 
+                                            FORMAT(valor_total, 2, 'de_DE') valor_total, nome
                                             FROM ordens_servicos
-                                            ORDER BY data_inicio
+                                            JOIN clientes
+                                            ON pk_cliente = fk_cliente
+
+                                            ORDER BY data_inicio DESC
                                             ";
-                                            $stmt = $conn->prepare($sql);
-                                            $stmt->execute();
 
-                                            $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-                                            foreach ($dados as $row) {
-                                                echo '
-                                                <tr>
-                                                <td>' . $row->pk_ordem_servico . '</td>
-                                                <td class="text-center">' . $row->fk_cliente . '</td>
-                                                <td class="text-center">' . $row->data_inicio . '</td>
-                                                <td class="text-center">' . $row->data_fim . '</td>
-                                                <td class="text-center">
-                                                    <a 
-                                                    href="form.php?ref=' . base64_encode($row->pk_ordem_servico) . '
-                                                    " class="btn btn-info btn-sm "><i class="bi bi-pencil-square"></i></a>
-                                                    <a href="remover.php?ref=' . base64_encode($row->pk_ordem_servico) . '
-                                                    " class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
-                                                </td>
-                                            </tr>
-                                                ';
+                                            try{
+                                                $stmt = $conn->prepare($sql);
+                                                $stmt->execute();
+    
+                                                $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
+    
+                                                foreach ($dados as $row) {
+                                                    echo '
+                                                    <tr>
+                                                    <td>' . $row->pk_ordem_servico . '</td>
+                                                    <td class="text-center">' . $row->nome . '</td>
+                                                    <td class="text-center">' . $row->data_inicio . '</td>
+                                                    <td class="text-center">' . $row->data_fim . '</td>
+                                                    <td class="text-center">' . $row->valor_total . '</td>
+                                                    <td class="text-center">
+                                                        <a 
+                                                        href="form.php?ref=' . base64_encode($row->pk_ordem_servico) . '
+                                                        " class="btn btn-info btn-sm "><i class="bi bi-pencil-square"></i></a>
+                                                        <a href="remover.php?ref=' . base64_encode($row->pk_ordem_servico) . '
+                                                        " class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
+                                                    </td>
+                                                </tr>
+                                                    ';
+                                                }
+                                            } catch(Exception $ex){
+                                                $_SESSION["tipo"] = "Error";
+                                                $_SESSION["title"] = "Ops!";
+                                                $_SESSION["msg"] = $ex->getMessage();
                                             }
-
                                             ?>
                                         </tbody>
                                     </table>
