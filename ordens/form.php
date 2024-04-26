@@ -103,8 +103,7 @@ if (empty($_GET["ref"])) {
                                                 </div>
                                                 <div class="col-md-3">
                                                     <label for="cpf" class="form-label">CPF:</label>
-                                                    <input  value="<?php echo $cpf ?>" type="text" name="cpf" id="cpf" class="form-control" 
-                                                    data-mask="000.000.000-00" required minlength="14">
+                                                    <input value="<?php echo $cpf ?>" type="text" name="cpf" id="cpf" class="form-control" data-mask="000.000.000-00" required minlength="14">
                                                 </div>
                                                 <div class="col-md">
                                                     <label for="nome" class="form-label">Cliente:</label>
@@ -118,11 +117,11 @@ if (empty($_GET["ref"])) {
                                                 </div>
                                                 <div class="col">
                                                     <label for="data_inicio" class="form-label">Data início:</label>
-                                                    <input value="<?php echo $data_inicio ?>" type="date" name="data_inicio" id="data_inicio" class="form-control" >
+                                                    <input value="<?php echo $data_inicio ?>" type="date" name="data_inicio" id="data_inicio" class="form-control">
                                                 </div>
                                                 <div class="col">
                                                     <label for="data_fim" class="form-label">Data Fim:</label>
-                                                    <input value="<?php echo $data_fim ?>" type="date" name="data_fim" id="data_fim" class="form-control" >
+                                                    <input value="<?php echo $data_fim ?>" type="date" name="data_fim" id="data_fim" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="row mt-5">
@@ -147,16 +146,42 @@ if (empty($_GET["ref"])) {
                                                                     <td>
                                                                         <select class="form-select" name="" id="">
                                                                             <option value="">--Selecione--</option>
+
+                                                                            <?php
+                                                                            $sql = "
+                                                                                SELECT pk_servico, servico FROM servicos
+                                                                                ORDER BY servico
+                                                                            ";
+                                                                            try {
+                                                                                $stmt = $conn->prepare($sql);
+                                                                                $stmt->execute();
+
+                                                                                $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+                                                                                foreach ($dados as $row) {
+                                                                                    echo "
+                                                                                    <option value='" . $row->pk_servico . "'>" . $row->servico . "</option>
+
+                                                                                    ";
+                                                                                }
+                                                                            } catch (Exception $ex) {
+                                                                                $_SESSION["tipo"] = "error";
+                                                                                $_SESSION["title"] = "Ops";
+                                                                                $_SESSION["msg"] = $ex->getMessage();
+
+                                                                                header("location: ./");
+                                                                                exit;
+                                                                            }
+                                                                            ?>
                                                                         </select>
                                                                     </td>
                                                                     <td>
-                                                                        <input class="form-control" type="text" name="" id="">
+                                                                        <input class="form-control" type="number" name="" id="">
                                                                     </td>
                                                                     <td class="text-center">
-            
-                                                                        <a href="" class="btn btn-danger btn-sm"
-                                                                        ><i class="bi bi-trash"></i>
-                                                                    </a>
+
+                                                                        <a href="" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i>
+                                                                        </a>
                                                                     </td>
                                                                 </tr>
 
@@ -230,6 +255,22 @@ if (empty($_GET["ref"])) {
 
     <script>
         $(function() {
+
+            $("#cpf").blur(function() {
+                // limpa input de nome
+                $("#nome").val("");
+                // faz a requisição para o arquivo "consultar_cpf.php"
+                $.getJSON(
+                    'consultar_cpf.php',
+                    function(result){
+                        console.log(result)
+                    }
+                )
+            })
+
+
+
+
             // navbar-white navbar-light
             // sidebar-dark-primary
 
