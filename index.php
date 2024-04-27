@@ -1,6 +1,9 @@
 <?php
 include('verificar_aut.php');
 include('conexao.php');
+
+$pagina_ativa = "home";
+
 ?>
 
 

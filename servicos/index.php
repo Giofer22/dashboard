@@ -1,7 +1,10 @@
 <?php
 include('../verificar_aut.php');
 include('../conexao.php');
-// include('../sweet_alert2.php')
+
+$pagina_ativa = "servicos";
+
+
 ?>
 
 

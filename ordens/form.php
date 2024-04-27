@@ -2,6 +2,31 @@
 include('../verificar_aut.php');
 include('../conexao.php');
 
+$pagina_ativa = "ordens";
+
+$sql = "
+    SELECT pk_servico, servico FROM servicos
+    ORDER BY servico
+";
+try {
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+
+    $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $options = '<option value "">--Selecione--</option>';
+    foreach ($dados as $row) {
+        $options .= '<option value="' . $row->pk_servico . '">' . $row->servico . '</option>';
+    }
+} catch (Exception $ex) {
+    $_SESSION["tipo"] = "error";
+    $_SESSION["title"] = "Ops";
+    $_SESSION["msg"] = $ex->getMessage();
+
+    header("location: ./");
+    exit;
+}
+
 if (empty($_GET["ref"])) {
     $pk_ordem_servico = "";
     $cpf = "";
@@ -117,7 +142,7 @@ if (empty($_GET["ref"])) {
                                                 </div>
                                                 <div class="col">
                                                     <label for="data_inicio" class="form-label">Data início:</label>
-                                                    <input value="<?php echo $data_inicio ?>" type="date" name="data_inicio" id="data_inicio" class="form-control">
+                                                    <input required value="<?php echo $data_inicio ?>" type="date" name="data_inicio" id="data_inicio" class="form-control">
                                                 </div>
                                                 <div class="col">
                                                     <label for="data_fim" class="form-label">Data Fim:</label>
@@ -128,12 +153,12 @@ if (empty($_GET["ref"])) {
                                                 <div class="card card-warning card-outline">
                                                     <div class="card-header">
                                                         <h3 class="card-title">Lista de Ordens de Serviço</h3>
-                                                        <a href="./form.php" class="btn btn-primary float-end btn-sm ">
+                                                        <button class="btn btn-primary float-end btn-sm" id="btn-add">
                                                             <i class="bi bi-plus"></i>
-                                                        </a>
+                                                        </button>
                                                     </div>
                                                     <div class="card-body">
-                                                        <table class="table">
+                                                        <table class="table" id="tabela_servicos">
                                                             <thead>
                                                                 <tr>
                                                                     <th>Serviço</th>
@@ -145,43 +170,14 @@ if (empty($_GET["ref"])) {
                                                                 <tr>
                                                                     <td>
                                                                         <select class="form-select" name="" id="">
-                                                                            <option value="">--Selecione--</option>
+                                                                          <?php echo $options; ?>
 
-                                                                            <?php
-                                                                            $sql = "
-                                                                                SELECT pk_servico, servico FROM servicos
-                                                                                ORDER BY servico
-                                                                            ";
-                                                                            try {
-                                                                                $stmt = $conn->prepare($sql);
-                                                                                $stmt->execute();
-
-                                                                                $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-                                                                                foreach ($dados as $row) {
-                                                                                    echo "
-                                                                                    <option value='" . $row->pk_servico . "'>" . $row->servico . "</option>
-
-                                                                                    ";
-                                                                                }
-                                                                            } catch (Exception $ex) {
-                                                                                $_SESSION["tipo"] = "error";
-                                                                                $_SESSION["title"] = "Ops";
-                                                                                $_SESSION["msg"] = $ex->getMessage();
-
-                                                                                header("location: ./");
-                                                                                exit;
-                                                                            }
-                                                                            ?>
                                                                         </select>
                                                                     </td>
                                                                     <td>
                                                                         <input class="form-control" type="number" name="" id="">
                                                                     </td>
                                                                     <td class="text-center">
-
-                                                                        <a href="" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i>
-                                                                        </a>
                                                                     </td>
                                                                 </tr>
 
@@ -256,17 +252,51 @@ if (empty($_GET["ref"])) {
     <script>
         $(function() {
 
-            $("#cpf").blur(function() {
+            $("#cpf").change(function() {
                 // limpa input de nome
                 $("#nome").val("");
                 // faz a requisição para o arquivo "consultar_cpf.php"
                 $.getJSON(
                     'consultar_cpf.php',
-                    function(result){
-                        console.log(result)
+                    {
+                        cpf: $("#cpf").val()
+                    },
+                    function(data){
+                        if(data['success'] == true){
+                            $("#nome").val(data['dado']['nome']);
+                        } else{
+                            alert(data['dado'])
+                        }
                     }
                 )
             })
+
+            $("#btn-add").click(function(){
+                var newRow = $("<tr>");
+                var cols = "";
+                cols += '<td>';
+                cols += '<select class="form-select" name"">';
+                cols += '<?php echo $options ?>';
+                cols += '</select>';
+                cols += '</td>';
+                cols += '<td><input class="form-control" type="number" name="" id=""></td>'
+                cols += '<td class="text-center"><button class="btn btn-danger btn-sm" onclick="RemoveRow(this)" type="button" ><i class="bi bi-trash"></i></button></td>'
+                newRow.append(cols);
+                $("#tabela_servicos").append(newRow);
+            });
+
+            // Remover linha
+
+            RemoveRow = function(item){
+                var tr = $(item).closest('tr');
+                tr.fadeOut(200, function(){
+                    tr.remove();
+                });
+                return false;
+            }
+
+
+
 
 
 

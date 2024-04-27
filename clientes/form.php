@@ -2,6 +2,8 @@
 include('../verificar_aut.php');
 include('../conexao.php');
 
+$pagina_ativa = "clientes";
+
 if (empty($_GET["ref"])) {
     $pk_cliente = "";
     $nome = "";

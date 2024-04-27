@@ -2,6 +2,8 @@
 include('../verificar_aut.php');
 include('../conexao.php');
 
+$pagina_ativa = "servicos";
+
 if (empty($_GET["ref"])) {
     $pk_servico = "";
     $servico = "";
