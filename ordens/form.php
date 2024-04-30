@@ -128,7 +128,14 @@ if (empty($_GET["ref"])) {
                                                 </div>
                                                 <div class="col-md-3">
                                                     <label for="cpf" class="form-label">CPF:</label>
-                                                    <input value="<?php echo $cpf ?>" type="text" name="cpf" id="cpf" class="form-control" data-mask="000.000.000-00" required minlength="14">
+                                                    <div class="input-group">
+                                                        <input value="<?php echo $cpf ?>" type="text" name="cpf" id="cpf" class="form-control" data-mask="000.000.000-00" required minlength="14">
+                                                        <span class="input-group-append">
+                                                            <button class="btn btn-default btn-flat">
+                                                                <i id="btn-search" class="bi bi-search-heart"></i>
+                                                            </button>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                                 <div class="col-md">
                                                     <label for="nome" class="form-label">Cliente:</label>
@@ -142,7 +149,7 @@ if (empty($_GET["ref"])) {
                                                 </div>
                                                 <div class="col">
                                                     <label for="data_inicio" class="form-label">Data início:</label>
-                                                    <input required value="<?php echo $data_inicio ?>" type="date" name="data_inicio" id="data_inicio" class="form-control">
+                                                    <input  value="<?php echo $data_inicio ?>" type="date" name="data_inicio" id="data_inicio" class="form-control">
                                                 </div>
                                                 <div class="col">
                                                     <label for="data_fim" class="form-label">Data Fim:</label>
@@ -169,13 +176,12 @@ if (empty($_GET["ref"])) {
                                                             <tbody class="">
                                                                 <tr>
                                                                     <td>
-                                                                        <select class="form-select" name="" id="">
-                                                                          <?php echo $options; ?>
-
+                                                                        <select required class="form-select" name="fk_servico[]" id="">
+                                                                            <?php echo $options; ?>
                                                                         </select>
                                                                     </td>
                                                                     <td>
-                                                                        <input class="form-control" type="number" name="" id="">
+                                                                        <input required class="form-control" type="text" name="valor[]" id="">
                                                                     </td>
                                                                     <td class="text-center">
                                                                     </td>
@@ -252,34 +258,42 @@ if (empty($_GET["ref"])) {
     <script>
         $(function() {
 
-            $("#cpf").change(function() {
+
+            $("#cpf").keyup(function(){
+                // Limpa o input de nome
+                $("#nome").val("");
+            })
+
+
+            $("#btn-search").click(function() {
                 // limpa input de nome
                 $("#nome").val("");
                 // faz a requisição para o arquivo "consultar_cpf.php"
                 $.getJSON(
-                    'consultar_cpf.php',
-                    {
+                    'consultar_cpf.php', {
                         cpf: $("#cpf").val()
                     },
-                    function(data){
-                        if(data['success'] == true){
+                    function(data) {
+                        if (data['success'] == true) {
                             $("#nome").val(data['dado']['nome']);
-                        } else{
+                        } else {
                             alert(data['dado'])
+                            $("#cpf").val("")
+                            $("#cpf").focus()
                         }
                     }
                 )
             })
 
-            $("#btn-add").click(function(){
+            $("#btn-add").click(function() {
                 var newRow = $("<tr>");
                 var cols = "";
                 cols += '<td>';
-                cols += '<select class="form-select" name"">';
+                cols += '<select class="form-select" name"fk_servico[]">';
                 cols += '<?php echo $options ?>';
                 cols += '</select>';
                 cols += '</td>';
-                cols += '<td><input class="form-control" type="number" name="" id=""></td>'
+                cols += '<td><input class="form-control" type="number" name="valor[]" id=""></td>'
                 cols += '<td class="text-center"><button class="btn btn-danger btn-sm" onclick="RemoveRow(this)" type="button" ><i class="bi bi-trash"></i></button></td>'
                 newRow.append(cols);
                 $("#tabela_servicos").append(newRow);
@@ -287,9 +301,9 @@ if (empty($_GET["ref"])) {
 
             // Remover linha
 
-            RemoveRow = function(item){
+            RemoveRow = function(item) {
                 var tr = $(item).closest('tr');
-                tr.fadeOut(200, function(){
+                tr.fadeOut(200, function() {
                     tr.remove();
                 });
                 return false;
