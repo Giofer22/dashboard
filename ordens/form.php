@@ -52,7 +52,7 @@ if (empty($_GET["ref"])) {
         $dado = $stmt->fetch(PDO::FETCH_OBJ);
         $data_ordem_servico = $dado->data_ordem_servico;
         $data_inicio = $dado->data_inicio;
-        $data_inicio = $dado->data_fim;
+        $data_fim = $dado->data_fim;
         $cpf = $dado->cpf;
         $nome = $dado->nome;
     } else {
@@ -131,7 +131,7 @@ if (empty($_GET["ref"])) {
                                                     <div class="input-group">
                                                         <input value="<?php echo $cpf ?>" type="text" name="cpf" id="cpf" class="form-control" data-mask="000.000.000-00" required minlength="14">
                                                         <span class="input-group-append">
-                                                            <button class="btn btn-default btn-flat">
+                                                            <button class="btn btn-default btn-flat" type="button">
                                                                 <i id="btn-search" class="bi bi-search-heart"></i>
                                                             </button>
                                                         </span>
@@ -149,7 +149,7 @@ if (empty($_GET["ref"])) {
                                                 </div>
                                                 <div class="col">
                                                     <label for="data_inicio" class="form-label">Data início:</label>
-                                                    <input  value="<?php echo $data_inicio ?>" type="date" name="data_inicio" id="data_inicio" class="form-control">
+                                                    <input value="<?php echo $data_inicio ?>" type="date" name="data_inicio" id="data_inicio" class="form-control">
                                                 </div>
                                                 <div class="col">
                                                     <label for="data_fim" class="form-label">Data Fim:</label>
@@ -160,7 +160,7 @@ if (empty($_GET["ref"])) {
                                                 <div class="card card-warning card-outline">
                                                     <div class="card-header">
                                                         <h3 class="card-title">Lista de Ordens de Serviço</h3>
-                                                        <button class="btn btn-primary float-end btn-sm" id="btn-add">
+                                                        <button class="btn btn-primary float-end btn-sm" id="btn-add" type="button">
                                                             <i class="bi bi-plus"></i>
                                                         </button>
                                                     </div>
@@ -174,18 +174,65 @@ if (empty($_GET["ref"])) {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="">
-                                                                <tr>
-                                                                    <td>
-                                                                        <select required class="form-select" name="fk_servico[]" id="">
-                                                                            <?php echo $options; ?>
-                                                                        </select>
-                                                                    </td>
-                                                                    <td>
-                                                                        <input required class="form-control" type="text" name="valor[]" id="">
-                                                                    </td>
-                                                                    <td class="text-center">
-                                                                    </td>
-                                                                </tr>
+                                                                <?php
+                                                                if (empty($pk_ordem_servico)) {
+                                                                    echo '
+                                                                    <tr>
+                                                                        <td>
+                                                                            <select required class="form-select" name="fk_servico[]" id="">
+                                                                                ' . $options . '
+                                                                            </select>
+                                                                        </td>
+                                                                        <td>
+                                                                            <input required class="form-control" type="text" name="valor[]" id="">
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                        </td>
+                                                                    </tr>
+                                                                    ';
+                                                                } else {
+                                                                    $sql = "
+                                                                        SELECT s.pk_servico, s.servico, rl.valor
+                                                                        FROM servicos s
+                                                                        JOIN rl_servicos_os rl ON rl.fk_servico = s.pk_servico
+                                                                        WHERE rl.fk_ordem_servico = :pk_ordem_servico
+                                                                    ";
+                                                                    try {
+                                                                        $stmt = $conn->prepare($sql);
+                                                                        $stmt->bindParam(':pk_ordem_servico', $pk_ordem_servico);
+                                                                        $stmt->execute();
+
+                                                                        $dados = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+                                                                        foreach ($dados as $key => $row) {
+                                                                            echo '
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <select required class="form-select" name="fk_servico[]" id="">
+                                                                                            <option selected value = "' . $row->pk_servico . '">' . $row->servico . '</option>
+                                                                                            ' . $options . '
+                                                                                        </select>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input value="' . $row->valor . '" required class="form-control" type="text" name="valor[]" id="">
+                                                                                    </td>
+                                                                                    <td class="text-center">
+                                                                                    <button class="btn btn-danger btn-sm" onclick="RemoveRow(this)" type="button" >
+                                                                                    <i class="bi bi-trash"></i>
+                                                                                    </button>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            ';
+                                                                        }
+                                                                    } catch (PDOException $ex) {
+                                                                        $_SESSION['tipo'] = "error";
+                                                                        $_SESSION['title'] = "ops!";
+                                                                        $_SESSION['msg'] = $ex->getMessage();
+                                                                    }
+                                                                }
+                                                                ?>
+
+
 
                                                             </tbody>
                                                         </table>
@@ -259,7 +306,7 @@ if (empty($_GET["ref"])) {
         $(function() {
 
 
-            $("#cpf").keyup(function(){
+            $("#cpf").keyup(function() {
                 // Limpa o input de nome
                 $("#nome").val("");
             })
@@ -289,7 +336,7 @@ if (empty($_GET["ref"])) {
                 var newRow = $("<tr>");
                 var cols = "";
                 cols += '<td>';
-                cols += '<select class="form-select" name"fk_servico[]">';
+                cols += '<select class="form-select" name="fk_servico[]">';
                 cols += '<?php echo $options ?>';
                 cols += '</select>';
                 cols += '</td>';

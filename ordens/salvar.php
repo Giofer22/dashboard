@@ -33,9 +33,8 @@ if ($_POST) {
             } else {
                 $sql = "
                 UPDATE ordens_servicos SET
-                data_ordem_servico = :data_ordem_servico,
                 data_inicio = :data_inicio,
-                data_fim = :data_fim
+                data_fim = :data_fim,
                 fk_cliente = (SELECT pk_cliente FROM clientes WHERE cpf LIKE :cpf)
                 WHERE pk_ordem_servico = :pk_ordem_servico
             ";
@@ -55,7 +54,7 @@ if ($_POST) {
 
             // montar dados da tablela de relacionamento
             $sql = '
-                DELETE FROM rl_servico_os 
+                DELETE FROM rl_servicos_os 
                 WHERE fk_ordem_servico = :pk_ordem_servico
             ';
             $stmt = $conn->prepare($sql);
@@ -63,14 +62,13 @@ if ($_POST) {
             $stmt->execute();
 
             $sql='
-                INSERT INTO rl_servico_os VALUES
-
+                INSERT INTO rl_servicos_os VALUES
             ';
 
             $servicos = $_POST["fk_servico"];
             $valores = $_POST["valor"];
 
-            foreach($_POST["fk_servico"] as $key => $pk_ordem_servico){
+            foreach($servicos as $key => $servico){
                 $sql .= "(:fk_servico_$key, :pk_ordem_servico, :valor_$key),";
             }
 
