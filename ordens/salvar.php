@@ -83,6 +83,19 @@ if ($_POST) {
 
             $stmt->execute();
 
+            $sql='
+            UPDATE ordens_servicos SET
+            valor_total = (
+                SELECT SUM(valor) 
+                FROM rl_servicos_os
+                WHERE fk_ordem_servico = :pk_ordem_servico
+            )
+            WHERE pk_ordem_servico = :pk_ordem_servico
+            ';
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':pk_ordem_servico', $pk_ordem_servico);
+            $stmt->execute();
+
 
 
 

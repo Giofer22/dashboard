@@ -1,3 +1,6 @@
+
+
+
 <aside id="aside"class="main-sidebar sidebar-light-primary elevation-4">
   <!-- Brand Logo -->
   <a href="<?php echo caminhoURL; ?>index.php" class="brand-link">
@@ -36,7 +39,7 @@
             <i class="nav-icon bi bi-wrench-adjustable-circle-fill"></i>
             <p>
               Ordens de Serviço
-              <span class="right badge badge-warning">15</span>
+              <span class="right badge badge-warning"><?php echo $dados->total_os; ?></span>
             </p>
           </a>
         </li>
