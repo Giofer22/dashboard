@@ -4,10 +4,6 @@ include('conexao.php');
 
 $pagina_ativa = "home";
 
-
-
-
-
 ?>
 
 
@@ -29,6 +25,8 @@ $pagina_ativa = "home";
   <link rel="stylesheet" href="dist/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
   <!-- iCheck -->
   <link rel="stylesheet" href="dist/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="dist/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
   <!-- overlayScrollbars -->
@@ -187,6 +185,11 @@ $pagina_ativa = "home";
   <script src="dist/plugins/chart.js/Chart.min.js"></script>
   <!-- AdminLTE App -->
   <script src="dist/js/adminlte.js"></script>
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="dist/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <?php
+    include("sweet_alert2.php");
+    ?>
 
   <script>
     $(function() {

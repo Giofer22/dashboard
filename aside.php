@@ -16,7 +16,7 @@
         <img src="https://github.com/Giofer22.png" class="img-circle elevation-2" alt="User Image">
       </div>
       <div class="info">
-        <a href="#" class="d-block"><?php echo $_SESSION["nome_usuario"]; ?></a>
+        <a href="<?php echo caminhoURL; ?>meu_perfil/" class="d-block"><?php echo $_SESSION["nome_usuario"]; ?></a>
       </div>
     </div>
 
