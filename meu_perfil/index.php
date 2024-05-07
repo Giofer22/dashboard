@@ -87,7 +87,7 @@ if ($stmt->rowCount() > 0) {
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-3">
-                                                <img class="img-fluid rounded-circle " src="https://github.com/Giofer22.png" alt="" width="300">
+                                                <img class="img-fluid rounded-circle " src="fotos/<?php echo $foto ?>" alt="" width="300" height="300">
                                             </div>
                                             <div class="col ms-3">
                                                 <div class="row mb-3">
@@ -169,7 +169,7 @@ if ($stmt->rowCount() > 0) {
     <!-- AdminLTE App -->
     <script src="../dist/js/adminlte.js"></script>
     <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="../dist/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <script src="../dist/plugins/sweetalert2/sweetalert2.min.js"></script>
     <?php
     include("../sweet_alert2.php");
     ?>

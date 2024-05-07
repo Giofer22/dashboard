@@ -215,10 +215,28 @@ $pagina_ativa = "home";
         }
       })
 
+      <?php
+        $sql="
+          SELECT COUNT(pk_ordem_servico) total, 
+          DATE_FORMAT(data_ordem_servico, '%m/%y') mesAno
+          FROM ordens_servicos
+          GROUP BY DATA_FORMAT(data_ordem_servico, '%m/%y')
+          ORDER BY data_ordem_servico
+        ";
+
+        try{
+          $stmt = $conn->prepare($sql);
+          $stmt -> execute();
+          $dados = $stmt -> fetchAll(PDO::FETCH_OBJ); 
+        } catch(PDOException $e){
+          echo "console.log('". $e->getMessage()."');";
+        }
+      ?>
+
       var areaChartData = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho'],
         datasets: [{
-            label: 'Digital Goods',
+            label: 'OS concluídas',
             backgroundColor: 'rgba(60,141,188,0.9)',
             borderColor: 'rgba(60,141,188,0.8)',
             pointRadius: false,
@@ -229,7 +247,7 @@ $pagina_ativa = "home";
             data: [28, 48, 40, 19, 86, 27, 90]
           },
           {
-            label: 'Electronics',
+            label: 'OS total',
             backgroundColor: 'rgba(210, 214, 222, 1)',
             borderColor: 'rgba(210, 214, 222, 1)',
             pointRadius: false,
