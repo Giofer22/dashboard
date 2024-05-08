@@ -217,10 +217,17 @@ $pagina_ativa = "home";
 
       <?php
         $sql="
-          SELECT COUNT(pk_ordem_servico) total, 
-          DATE_FORMAT(data_ordem_servico, '%m/%y') mesAno
-          FROM ordens_servicos
-          GROUP BY DATA_FORMAT(data_ordem_servico, '%m/%y')
+          SELECT COUNT(pk_ordem_servico) total_os, 
+          DATE_FORMAT(data_ordem_servico, '%b/%y') mesAno,
+          (
+            SELECT COUNT(pk_ordem_servico)
+            FROM ordens_servicos
+            WHERE DATE_FORMAT(data_ordem_servico, '%m/%y') = DATE_FORMAT(a.data_ordem_servico, '%m/%y')
+            AND data_fim <> '0000-00-00'
+          ) total_conclidas
+          FROM ordens_servicos a
+          WHERE data_ordem_servico >= DATE_SUB(data_ordem_servico, INTERVAL 1 YEAR)
+          GROUP BY DATE_FORMAT(data_ordem_servico, '%m/%y')
           ORDER BY data_ordem_servico
         ";
 
@@ -228,15 +235,24 @@ $pagina_ativa = "home";
           $stmt = $conn->prepare($sql);
           $stmt -> execute();
           $dados = $stmt -> fetchAll(PDO::FETCH_OBJ); 
+
+          $meses = array();
+          $valores = array();
+          $concluidas = array();
+          foreach($dados as $key => $row){
+            array_push($meses, "'$row->mesAno'");
+            array_push($valores, $row->total_os);
+            array_push($concluidas, $row->total_conclidas);
+          }
         } catch(PDOException $e){
           echo "console.log('". $e->getMessage()."');";
         }
       ?>
 
       var areaChartData = {
-        labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho'],
+        labels: [<?php echo implode(",",$meses); ?>],
         datasets: [{
-            label: 'OS concluídas',
+            label: 'OS total',
             backgroundColor: 'rgba(60,141,188,0.9)',
             borderColor: 'rgba(60,141,188,0.8)',
             pointRadius: false,
@@ -244,10 +260,10 @@ $pagina_ativa = "home";
             pointStrokeColor: 'rgba(60,141,188,1)',
             pointHighlightFill: '#fff',
             pointHighlightStroke: 'rgba(60,141,188,1)',
-            data: [28, 48, 40, 19, 86, 27, 90]
+            data: [<?php echo implode(",",$valores); ?>]
           },
           {
-            label: 'OS total',
+            label: 'OS concluidas',
             backgroundColor: 'rgba(210, 214, 222, 1)',
             borderColor: 'rgba(210, 214, 222, 1)',
             pointRadius: false,
@@ -255,7 +271,7 @@ $pagina_ativa = "home";
             pointStrokeColor: '#c1c7d1',
             pointHighlightFill: '#fff',
             pointHighlightStroke: 'rgba(220,220,220,1)',
-            data: [65, 59, 80, 81, 56, 55, 40]
+            data: [<?php echo implode(",",$concluidas); ?>]
           },
         ]
       }
