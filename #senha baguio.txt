@@ -1,0 +1,10 @@
+senha
+Senac2024
+
+host
+sql307.infinityfree.com	
+
+db name
+if0_36511509_senac
+
+gfmsantos22@gmail.com
